@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@tsparticles/confetti": "^3.5.0"
+  }
+}

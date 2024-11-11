@@ -1,0 +1,67 @@
+<div class="flex flex-col gap-12 items-center justify-center w-full h-full grow">
+  <div class="w-full">
+    <div :if={@quiz_state != "finished"}>
+      <p :if={@current_question} class="sr-only" id="read-question" phx-hook="ReadQuestion">
+        <%= @current_question.question %>
+        <%= for answer <- @current_question.answers do %>
+          <%= answer["text"] %>
+        <% end %>
+      </p>
+      <h2 class="text-3xl text-center bg-clip-text text-transparent bg-gradient-to-r to-indigo-400 from-blue-500 font-semibold drop-shadow-lg mb-12">
+        <%= @current_question.question %>
+      </h2>
+      <%= if @current_question.answers != [] do %>
+        <div class="flex flex-col w-full gap-8">
+          <%= for answer <- @current_question.answers do %>
+            <button
+              class={[
+                "p-4 flex flex-col grow gap-1 items-center text-center rounded-lg text-slate-600 drop-shadow-lg transition-all",
+                @quiz_state != "correct" && "bg-white",
+                @quiz_state == "correct" && @selected_answer_id == answer["id"] && "bg-green-500",
+                @quiz_state == "correct" && @selected_answer_id != answer["id"] &&
+                  "bg-white disabled:opacity-50",
+                @quiz_state == "wrong" && @selected_answer_id == answer["id"] &&
+                  "animate-wiggle"
+              ]}
+              phx-click="submit_answer"
+              phx-value-answer={answer["id"]}
+              disabled={@quiz_state == "correct"}
+            >
+              <span class="text-6xl"><%= answer["emoji"] %></span>
+              <span class="text-md"><%= answer["text"] %></span>
+            </button>
+            <span
+              :if={@quiz_state == "correct"}
+              id={"quiz_answer-#{answer["id"]}-#{answer["emoji"]}"}
+              class="sr-only"
+              phx-hook="PartyConfetti"
+            >
+              🎉
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <button
+    :if={@quiz_state != "finished"}
+    class={[
+      "px-8 py-6 rounded-md text-4xl disabled:opacity-50 transition-opacity border-2 border-fuchsia-500 text-fuchsia-700",
+      @quiz_state == "correct" && "opacity-100",
+      @quiz_state != "correct" && "opacity-0"
+    ]}
+    phx-click="next_question"
+    phx-disable-with="…"
+  >
+    <span class="phx-submit-loading:animate-pulse">Nächste Frage 🎉</span>
+  </button>
+  <button
+    :if={@quiz_state == "finished"}
+    class="px-8 py-6 rounded-md text-4xl disabled:opacity-50 transition-opacity bg-white text-fuchsia-700 drop-shadow-lg"
+    phx-click="new_question"
+    phx-throttle="500"
+    phx-disable-with="Lade Fragen… 🤖"
+  >
+    <span class="phx-submit-loading:animate-pulse">Mehr Fragen laden 💭</span>
+  </button>
+</div>
