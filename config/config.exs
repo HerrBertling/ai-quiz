@@ -22,8 +22,6 @@ config :menas_quiz, MenasQuizWeb.Endpoint,
   pubsub_server: MenasQuiz.PubSub,
   live_view: [signing_salt: "W3jHFU8X"]
 
-config :langchain, openai_key: System.get_env("OPENAI_API_KEY")
-
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
